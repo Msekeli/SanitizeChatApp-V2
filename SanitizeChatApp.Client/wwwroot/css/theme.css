@@ -1,0 +1,188 @@
+﻿/* ================================
+   Root Variables & Dark Mode
+================================ */
+:root {
+    --text-color: #222;
+    --bg-color: #f9f9f9;
+    --card-bg: #ffffff;
+    --btn-primary: #007bff;
+    --btn-hover-bg: #0056b3;
+    --btn-outline: #007bff;
+    --btn-glow: rgba(0, 123, 255, 0.5);
+}
+
+body.dark-mode {
+    --text-color: #f5f5f5;
+    --bg-color: #1e1e2f;
+    --card-bg: #2c2c3b;
+}
+
+/* ================================
+   Base Typography & Layout
+================================ */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3 {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* ================================
+   Buttons
+================================ */
+.btn {
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: scale(1.03);
+}
+
+.btn-primary {
+    background-color: var(--btn-primary);
+    color: white;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--btn-outline);
+    color: var(--btn-outline);
+    background-color: transparent;
+}
+
+/* ================================
+   Forms & Inputs
+================================ */
+input, textarea {
+    border: 2px solid var(--btn-outline);
+    border-radius: 6px;
+    padding: 0.5rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 6px var(--btn-glow);
+}
+
+body.dark-mode input,
+body.dark-mode textarea {
+    background-color: #3b3b4f;
+    color: #000;
+    border-color: #666;
+}
+
+/* ================================
+   Tables
+================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+thead th {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-weight: 600;
+    padding: 0.5rem;
+}
+
+tbody td {
+    background-color: var(--card-bg);
+    padding: 0.5rem;
+}
+
+tbody tr:hover {
+    background-color: rgba(0, 128, 0, 0.1);
+}
+
+body.dark-mode thead th,
+body.dark-mode tbody td {
+    background-color: #3b3b4f;
+    color: #f5f5f5;
+}
+
+/* ================================
+   Modals
+================================ */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+
+.modal-dialog {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* ================================
+   Scrollbars
+================================ */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ================================
+   Responsive Breakpoints
+================================ */
+@media (max-width: 768px) {
+    h1, h2 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .container {
+        padding: 0.5rem;
+    }
+
+    input, textarea {
+        font-size: 0.9rem;
+    }
+
+    table thead th,
+    table tbody td {
+        font-size: 0.9rem;
+    }
+}

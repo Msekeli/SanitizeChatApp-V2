@@ -1,0 +1,53 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+
+<div class="@($"app-container d-flex flex-column min-vh-100 {(isDarkMode ? "dark-mode" : "light-mode")}")">
+    <!-- Header -->
+    <header class="navbar header-glass d-flex align-items-center px-8">
+        <!-- Left: Home Button with Icon -->
+        <div class="left-controls">
+            <button class="btn home-btn d-flex align-items-center" @onclick="GoHome" title="Home">
+                <i class="bi bi-house-fill home-icon" aria-hidden="true"></i>
+                <span class="home-text">Home</span>
+            </button>
+        </div>
+
+        <!-- Center: Logo -->
+        <div class="logo-container">
+            <img src="app-logo.png" alt="SanitizeChatApp Logo" class="app-logo" />
+        </div>
+
+        <!-- Right: Dark Mode Toggle + Label -->
+        <div class="right-controls d-flex align-items-center">
+            <button class="dark-toggle" @onclick="ToggleDarkMode" aria-pressed="@isDarkMode" title="Toggle dark mode">
+                <span class="knob"></span>
+            </button>
+            <span class="dark-mode-label">Dark Mode</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-fill body-area">
+        <div class="container py-4">
+            @Body
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass text-center py-3 mt-auto">
+        <p class="mb-0 footer-text">
+            © @DateTime.Now.Year SanitizeChatApp — Built by Msekeli Mkwibiso 💬
+        </p>
+    </footer>
+</div>
+
+@code {
+    private bool isDarkMode = false;
+
+    private void GoHome() => NavManager.NavigateTo("/");
+
+    private void ToggleDarkMode()
+    {
+        isDarkMode = !isDarkMode;
+    }
+}

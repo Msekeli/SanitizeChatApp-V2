@@ -1,0 +1,172 @@
+﻿
+   /*App Container*/
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/*header*/
+.header-glass {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 10%;
+    background-color: var(--header-footer-bg);
+    color: var(--text-color);
+    box-shadow: 0 2px 6px var(--shadow-color);
+    z-index: 10;
+}
+
+/* Header left and right controls */
+.left-controls, .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+ /*Home Button*/
+.home-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border: 2px solid var(--btn-outline);
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-color);
+    background: transparent;
+    transition: all 0.25s ease;
+}
+
+    .home-btn:hover {
+        background: var(--btn-hover-bg);
+        color: #ffffff;
+        border-color: var(--btn-outline);
+    }
+
+.home-icon {
+    font-size: 1.2rem;
+}
+
+   /*Logo*/
+.logo-container {
+    flex: 1;
+    text-align: center;
+}
+
+.app-logo {
+    max-height: 50px;
+    max-width: 160px;
+    object-fit: contain;
+}
+
+ /*Dark Mode Toggle*/ 
+.dark-toggle {
+    width: 70px;
+    height: 36px;
+    background: #000; 
+    border-radius: 20px;
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s ease;
+}
+
+    .dark-toggle .knob {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #fff;
+        transform: translateX(0);
+        transition: transform 0.25s ease;
+    }
+
+.app-container.dark-mode .dark-toggle .knob {
+    transform: translateX(34px);
+}
+
+.dark-mode-label {
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+   /*Body Area*/
+.body-area {
+    flex: 1;
+    padding: 2rem 1rem 5rem; 
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+   /*Footer*/   
+.footer-glass {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--header-footer-bg);
+    color: var(--text-color);
+    padding: 0.8rem 1rem;
+    text-align: center;
+    box-shadow: 0 -2px 6px var(--shadow-color);
+    z-index: 100;
+}
+
+ /*Cards and containers*/   
+.card {
+    background: var(--card-bg);
+    box-shadow: 0 4px 10px var(--shadow-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: background 0.4s ease, box-shadow 0.3s ease;
+}
+
+
+ /*Animations*/
+.fade-in {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/*Responsive*/
+@media (max-width: 768px) {
+    .header-glass {
+        flex-wrap: wrap;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .home-text {
+        display: none; 
+    }
+
+    .dark-mode-label {
+        font-size: 0.85rem;
+    }
+
+    .logo-container {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

@@ -1,0 +1,81 @@
+﻿@page "/chat"
+@using SanitizeChatApp.Client.Services
+@inject WordService WordService
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="chat-header text-center">
+    <h2>SanitizeChatApp Messenger</h2>
+    <p class="chat-info">
+        Some words are prohibited in this chat. Please be aware and refer to the Admin Dashboard for more information.
+    </p>
+</div>
+
+<div class="chat-container">
+    <!-- Scrollable Messages -->
+    <div class="chat-box">
+        @foreach (var msg in Messages)
+        {
+            <div class="chat-message-wrapper">
+                @if (msg.IsUser)
+                {
+                    <div class="sender-label">You</div>
+                }
+                <div class="chat-message">
+                    @msg.Text
+                    <div class="timestamp">@msg.TimeStamp.ToString("HH:mm")</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input mt-2">
+        <div class="input-wrapper position-relative">
+            <input @bind="UserInput"
+                   class="form-control chat-text-input"
+                   placeholder="Type your message..."
+                   @onkeydown="CheckEnter" />
+
+            <!-- Square Send Icon -->
+            <button class="send-icon-btn" @onclick="SendMessage" title="Send">
+                <i class="bi bi-caret-right-fill"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string UserInput = string.Empty;
+
+    private List<ChatMessage> Messages = new List<ChatMessage>();
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(UserInput))
+            return;
+
+        var sanitized = await WordService.SanitizeMessageAsync(UserInput);
+
+        Messages.Add(new ChatMessage
+        {
+            Text = sanitized,
+            IsUser = true,
+            TimeStamp = DateTime.Now
+        });
+
+        UserInput = string.Empty;
+    }
+
+    private async Task CheckEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendMessage();
+    }
+
+    public class ChatMessage
+    {
+        public string Text { get; set; } = string.Empty;
+        public bool IsUser { get; set; } = false;
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
+    }
+}

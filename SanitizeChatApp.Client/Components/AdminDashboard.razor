@@ -1,0 +1,195 @@
+﻿@page "/admin"
+@using SanitizeChatApp.Client.Models
+@using SanitizeChatApp.Client.Services
+@inject WordService WordService
+
+<h3 class="text-center mb-4">Admin Dashboard</h3>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="input-group w-50">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="Search words..." 
+               @oninput="DebouncedSearch" />
+    </div>
+
+    <div class="input-group w-50 ms-3">
+        <input type="text" class="form-control" placeholder="Add new word..." @bind="newWordText" />
+        <button class="btn btn-primary" @onclick="AddWord">
+            <i class="bi bi-plus-circle"></i>
+        </button>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width: 70%;">Word</th>
+            <th style="width: 30%;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var word in filteredWords)
+        {
+            <tr>
+                <td>@word.Text</td>
+                <td>
+                    <button class="btn btn-warning btn-sm me-2" @onclick="() => OpenEditDialog(word)" style="color:black">
+                        <i class="bi bi-pencil-square">Update</i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(word)" style="color:black">
+                        <i class="bi bi-trash3">Delete</i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Edit Dialog -->
+@if (showEditDialog)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <h5 class="modal-title">Edit Word</h5>
+                <div class="modal-body">
+                    <input type="text" class="form-control" @bind="editWordText" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseEditDialog">Close</button>
+                    <button class="btn btn-success" @onclick="ConfirmEdit">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Dialog -->
+@if (showDeleteDialog)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <div class="modal-body">
+                    Are you sure you want to delete "<strong>@wordToDelete?.Text</strong>"?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseDeleteDialog">Close</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<SensitiveWord> words = new();
+    private List<SensitiveWord> filteredWords = new();
+    private string newWordText = string.Empty;
+    private string searchTerm = string.Empty;
+
+    private bool showDeleteDialog = false;
+    private bool showEditDialog = false;
+    private SensitiveWord? wordToDelete;
+    private SensitiveWord? wordToEdit;
+    private string editWordText = string.Empty;
+    private System.Timers.Timer? searchTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWords();
+    }
+
+    private async Task LoadWords()
+    {
+        words = await WordService.GetWordsAsync();
+        FilterWords();
+    }
+
+    private void DebouncedSearch(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? string.Empty;
+
+        // Cancel previous timer if still running
+        searchTimer?.Stop();
+        searchTimer?.Dispose();
+
+        // Start a new short timer (200ms)
+        searchTimer = new System.Timers.Timer(200);
+        searchTimer.Elapsed += (_, _) =>
+        {
+            InvokeAsync(() =>
+            {
+                FilterWords();
+                StateHasChanged();
+            });
+            searchTimer.Stop();
+        };
+        searchTimer.Start();
+    }
+
+    private void FilterWords()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredWords = words.ToList();
+        }
+        else
+        {
+            filteredWords = words
+                .Where(w => w.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(w => w.Text)
+                .ToList();
+        }
+    }
+
+    private async Task AddWord()
+    {
+        if (!string.IsNullOrWhiteSpace(newWordText))
+        {
+            var word = new SensitiveWord { Text = newWordText.Trim() };
+            await WordService.AddWordAsync(word);
+            newWordText = string.Empty;
+            await LoadWords();
+        }
+    }
+
+    private void OpenEditDialog(SensitiveWord word)
+    {
+        wordToEdit = word;
+        editWordText = word.Text;
+        showEditDialog = true;
+    }
+
+    private void CloseEditDialog() => showEditDialog = false;
+
+    private async Task ConfirmEdit()
+    {
+        if (wordToEdit != null && !string.IsNullOrWhiteSpace(editWordText))
+        {
+            wordToEdit.Text = editWordText.Trim();
+            await WordService.UpdateWordAsync(wordToEdit);
+            showEditDialog = false;
+            await LoadWords();
+        }
+    }
+
+    private void OpenDeleteDialog(SensitiveWord word)
+    {
+        wordToDelete = word;
+        showDeleteDialog = true;
+    }
+
+    private void CloseDeleteDialog() => showDeleteDialog = false;
+
+    private async Task ConfirmDelete()
+    {
+        if (wordToDelete != null)
+        {
+            await WordService.DeleteWordAsync(wordToDelete.Id);
+            showDeleteDialog = false;
+            await LoadWords();
+        }
+    }
+}
